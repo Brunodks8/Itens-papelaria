@@ -1,88 +1,110 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta charset="UTF-8">
   <title>Saída itens industrial</title>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      padding: 40px;
-    }
 
-    h2 {
-      margin-bottom: 20px;
-    }
+  input {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
 
-    form {
-      background: #fff;
-      padding: 20px;
-      max-width: 400px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+  body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    margin: 0;
+    padding: 0;
+  }
 
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 6px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
+  .container {
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 16px;
+    background: #fff;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
 
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      background: #1976d2;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
-      cursor: pointer;
-    }
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
 
-    button:hover {
-      background: #125aa3;
-    }
+  input, button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
 
-    .sugestoes {
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      max-height: 150px;
-      overflow-y: auto;
-      margin-bottom: 10px;
-    }
+  button {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+  }
 
-    .sugestoes div {
-      padding: 8px;
-      cursor: pointer;
-    }
+  button:active {
+    opacity: 0.9;
+  }
 
-    .sugestoes div:hover {
-      background: #eee;
-    }
-  </style>
+.autocomplete-wrapper {
+  position: relative;
+}
+
+.sugestoes {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 120px;   /* altura da barrinha */
+  overflow-y: auto;    /* scroll */
+  background: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  z-index: 1000;
+}
+
+.sugestoes div {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.sugestoes div:hover {
+  background: #007bff;
+  color: #fff;
+}
+</style>
 </head>
 
 <body>
 
-<h2>Saida itens industrial</h2>
+<div class="container">
+  <h2>Saída Itens industrial</h2>
 
-<form id="form">
+  <form id="form">
 
   <!-- ITEM -->
+  <div class="autocomplete-wrapper">
   <input id="item" name="item" placeholder="Digite o item..." autocomplete="off" required>
   <div id="sugestoesItem" class="sugestoes"></div>
+</div>
 
   <!-- QUANTIDADE -->
   <input name="quantidade" type="number" placeholder="Quantidade" required>
 
   <!-- NOME -->
+  <div class="autocomplete-wrapper">
   <input id="nome" name="nome" placeholder="Digite o nome..." autocomplete="off" required>
   <div id="sugestoesNome" class="sugestoes"></div>
+</div>
 
   <!-- OBS -->
   <input name="obs" placeholder="Observação">
@@ -90,6 +112,7 @@
   <button type="submit">Enviar</button>
 
 </form>
+</div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbzuglRaDnQw9pLF243Jh-yht1TbbZcwBKuOhwgi3WHOhY4bD4qK6fTEpQZI5S50pEdPnQ/exec";
@@ -115,7 +138,7 @@ function ativarAutocomplete(input, box, fonte) {
 
     fonte()
       .filter(v => v.toLowerCase().includes(valor))
-      .slice(0, 8)
+      .slice(0, 3)
       .forEach(v => {
         const div = document.createElement("div");
         div.textContent = v;
