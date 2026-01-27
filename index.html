@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Saída itens industrial</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 40px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    form {
+      background: #fff;
+      padding: 20px;
+      max-width: 400px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #125aa3;
+    }
+
+    .sugestoes {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      max-height: 150px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+
+    .sugestoes div {
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .sugestoes div:hover {
+      background: #eee;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>Saida itens industrial</h2>
+
+<form id="form">
+
+  <!-- ITEM -->
+  <input id="item" name="item" placeholder="Digite o item..." autocomplete="off" required>
+  <div id="sugestoesItem" class="sugestoes"></div>
+
+  <!-- QUANTIDADE -->
+  <input name="quantidade" type="number" placeholder="Quantidade" required>
+
+  <!-- NOME -->
+  <input id="nome" name="nome" placeholder="Digite o nome..." autocomplete="off" required>
+  <div id="sugestoesNome" class="sugestoes"></div>
+
+  <!-- OBS -->
+  <input name="obs" placeholder="Observação">
+
+  <button type="submit">Enviar</button>
+
+</form>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbzuglRaDnQw9pLF243Jh-yht1TbbZcwBKuOhwgi3WHOhY4bD4qK6fTEpQZI5S50pEdPnQ/exec";
+
+let itens = [];
+let nomes = [];
+
+/* BUSCAR DADOS */
+fetch(API_URL + "?tipo=itens")
+  .then(r => r.json())
+  .then(d => itens = d);
+
+fetch(API_URL + "?tipo=nomes")
+  .then(r => r.json())
+  .then(d => nomes = d);
+
+/* AUTOCOMPLETE GENÉRICO */
+function ativarAutocomplete(input, box, fonte) {
+  input.addEventListener("input", () => {
+    box.innerHTML = "";
+    const valor = input.value.toLowerCase();
+    if (!valor) return;
+
+    fonte()
+      .filter(v => v.toLowerCase().includes(valor))
+      .slice(0, 8)
+      .forEach(v => {
+        const div = document.createElement("div");
+        div.textContent = v;
+        div.onclick = () => {
+          input.value = v;
+          box.innerHTML = "";
+        };
+        box.appendChild(div);
+      });
+  });
+}
+
+/* ATIVAR AUTOCOMPLETE */
+ativarAutocomplete(
+  document.getElementById("item"),
+  document.getElementById("sugestoesItem"),
+  () => itens
+);
+
+ativarAutocomplete(
+  document.getElementById("nome"),
+  document.getElementById("sugestoesNome"),
+  () => nomes
+);
+
+/* SUBMIT */
+document.getElementById("form").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const form = e.target;
+  const dados = Object.fromEntries(new FormData(form));
+
+  const itemDigitado = dados.item.trim().toLowerCase();
+  const nomeDigitado = dados.nome.trim().toLowerCase();
+
+  const itemValido = itens
+    .map(i => i.trim().toLowerCase())
+    .includes(itemDigitado);
+
+  const nomeValido = nomes
+    .map(n => n.trim().toLowerCase())
+    .includes(nomeDigitado);
+
+  if (!itemValido) {
+    alert("❌ Item não encontrado na base.");
+    document.getElementById("item").focus();
+    return;
+  }
+
+  if (!nomeValido) {
+    alert("❌ Nome não encontrado na base.");
+    document.getElementById("nome").focus();
+    return;
+  }
+
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify(dados)
+  });
+
+  alert("✅ Registro enviado com sucesso!");
+  form.reset();
+});
+</script>
+
+</body>
+</html>
