@@ -157,7 +157,7 @@
 </div>
  
   <!-- TURNO -->
-<input name="turno" type="number" placeholder="Quantidade" required>
+<input name="turno" type="number" placeholder="turno" required>
  
   <!-- NOME -->
 <div class="autocomplete-wrapper">
@@ -178,7 +178,7 @@ let nomes = [];
  
 /* BUSCAR DADOS */
 
-fetch(API_URL + "?tipo=itens")
+fetch(API_URL + "?tipo=setor")
 
   .then(r => r.json())
 
@@ -234,7 +234,7 @@ function ativarAutocomplete(input, box, fonte) {
 
 ativarAutocomplete(
 
-  document.getElementById("item"),
+  document.getElementById("setor"),
 
   document.getElementById("sugestoesItem"),
 
@@ -262,11 +262,11 @@ document.getElementById("form").addEventListener("submit", async e => {
 
   const dados = Object.fromEntries(new FormData(form));
  
-  const itemDigitado = dados.item.trim().toLowerCase();
+  const itemDigitado = dados.setor.trim().toLowerCase();
 
   const nomeDigitado = dados.nome.trim().toLowerCase();
  
-  const itemValido = itens
+  const itemValido = setor
 
     .map(i => i.trim().toLowerCase())
 
