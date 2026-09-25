@@ -1,196 +1,248 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="UTF-8">
-<title>Absenteísmo</title>
- 
-  <style>
- 
-  input {
+<title>Saída Itens Industrial</title>
 
+<style>
+
+input {
   border-radius: 6px;
-
   border: 1px solid #ccc;
-
 }
- 
-  body {
 
-    font-family: Arial, sans-serif;
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  margin: 0;
+  padding: 0;
+}
 
-    background: #f2f2f2;
-
-    margin: 0;
-
-    padding: 0;
-
-  }
- 
 .container {
-
   max-width: 420px;
-
   margin: 0 auto;
-
   padding: 24px 16px;
-
   background: #fff;
-
   min-height: 100vh;
-
   box-sizing: border-box;
- 
+
   display: flex;
-
   flex-direction: column;
-
-  justify-content: center;   /* 🔥 centraliza verticalmente */
-
+  justify-content: center;
 }
- 
-  h2 {
 
-    text-align: center;
-
-    margin-bottom: 20px;
-
-  }
- 
-  input, button {
-
-    width: 100%;
-
-    padding: 12px;
-
-    margin-bottom: 12px;
-
-    font-size: 16px;
-
-    box-sizing: border-box;
-
-  }
- 
-  button {
-
-    background: #007bff;
-
-    color: #fff;
-
-    border: none;
-
-    border-radius: 6px;
-
-    font-weight: bold;
-
-  }
- 
-  button:active {
-
-    opacity: 0.9;
-
-  }
- 
-.autocomplete-wrapper {
-
-  position: relative;
-
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
 }
- 
-.sugestoes {
 
-  position: absolute;
-
-  top: 100%;
-
-  left: 0;
-
+input,
+button {
   width: 100%;
-
-  max-height: 120px;   /* altura da barrinha */
-
-  overflow-y: auto;    /* scroll */
-
-  background: #fff;
-
-  border: 1px solid #ccc;
-
-  border-top: none;
-
-  border-radius: 0 0 6px 6px;
-
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-
-  z-index: 1000;
-
+  padding: 12px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  box-sizing: border-box;
 }
- 
-.sugestoes div {
 
-  padding: 10px;
-
-  cursor: pointer;
-
-}
- 
-.sugestoes div:hover {
-
+button {
   background: #007bff;
-
   color: #fff;
-
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
 }
+
+button:active {
+  opacity: 0.9;
+}
+
+button:disabled {
+  background: #999;
+  cursor: not-allowed;
+}
+
+.autocomplete-wrapper {
+  position: relative;
+}
+
+.sugestoes {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 120px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  z-index: 1000;
+}
+
+.sugestoes div {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.sugestoes div:hover {
+  background: #007bff;
+  color: #fff;
+}
+
 </style>
 </head>
- 
+
 <body>
- 
+
 <div class="container">
-<h2>Saída Itens industrial</h2>
- 
-  <form id="form">
- 
-  <!-- SETOR -->
-<div class="autocomplete-wrapper">
-<input id="item" name="itens" placeholder="Digite o setor..." autocomplete="off" required>
-<div id="sugestoesItem" class="sugestoes"></div>
-</div>
- 
+
+<h2>Saída Itens Industrial</h2>
+
+<form id="form">
+
+  <!-- ITEM -->
+  <div class="autocomplete-wrapper">
+
+    <input
+      id="item"
+      name="setor"
+      placeholder="Digite o item..."
+      autocomplete="off"
+      required
+    >
+
+    <div
+      id="sugestoesItem"
+      class="sugestoes">
+    </div>
+
+  </div>
+
+
   <!-- TURNO -->
-<input name="quantidade" type="number" placeholder="turno..." required>
- 
+  <input
+    name="turno"
+    type="number"
+    placeholder="Turno"
+    required
+  >
+
+
   <!-- NOME -->
-<div class="autocomplete-wrapper">
-<input id="nome" name="nome" placeholder="Digite o nome..." autocomplete="off" required>
-<div id="sugestoesNome" class="sugestoes"></div>
-</div>
- 
+  <div class="autocomplete-wrapper">
+
+    <input
+      id="nome"
+      name="nome"
+      placeholder="Digite o nome..."
+      autocomplete="off"
+      required
+    >
+
+    <div
+      id="sugestoesNome"
+      class="sugestoes">
+    </div>
+
+  </div>
+
+
+  <!-- BOTÃO -->
+  <button
+    id="btnEnviar"
+    type="submit">
+    ENVIAR
+  </button>
+
 </form>
+
 </div>
- 
+
+
 <script>
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzuglRaDnQw9pLF243Jh-yht1TbbZcwBKuOhwgi3WHOhY4bD4qK6fTEpQZI5S50pEdPnQ/exec%22;
- 
+/* =========================
+   CONFIGURAÇÃO
+========================= */
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbzuglRaDnQw9pLF243Jh-yht1TbbZcwBKuOhwgi3WHOhY4bD4qK6fTEpQZI5S50pEdPnQ/exec";
+
+
+/* =========================
+   VARIÁVEIS
+========================= */
+
 let itens = [];
-
 let nomes = [];
- 
-/* BUSCAR DADOS */
 
-fetch(API_URL + "?tipo=itens")
 
-  .then(r => r.json())
+/* =========================
+   BUSCAR ITENS
+========================= */
 
-  .then(d => itens = d);
- 
+fetch(API_URL + "?tipo=setor")
+
+  .then(response => {
+
+    if (!response.ok) {
+      throw new Error("Erro ao buscar itens.");
+    }
+
+    return response.json();
+
+  })
+
+  .then(data => {
+
+    itens = data;
+
+  })
+
+  .catch(error => {
+
+    console.error("Erro ao carregar itens:", error);
+
+  });
+
+
+/* =========================
+   BUSCAR NOMES
+========================= */
+
 fetch(API_URL + "?tipo=nomes")
 
-  .then(r => r.json())
+  .then(response => {
 
-  .then(d => nomes = d);
- 
-/* AUTOCOMPLETE GENÉRICO */
+    if (!response.ok) {
+      throw new Error("Erro ao buscar nomes.");
+    }
+
+    return response.json();
+
+  })
+
+  .then(data => {
+
+    nomes = data;
+
+  })
+
+  .catch(error => {
+
+    console.error("Erro ao carregar nomes:", error);
+
+  });
+
+
+/* =========================
+   AUTOCOMPLETE
+========================= */
 
 function ativarAutocomplete(input, box, fonte) {
 
@@ -198,13 +250,22 @@ function ativarAutocomplete(input, box, fonte) {
 
     box.innerHTML = "";
 
-    const valor = input.value.toLowerCase();
+    const valor = input.value
+      .trim()
+      .toLowerCase();
 
-    if (!valor) return;
- 
+    if (!valor) {
+      return;
+    }
+
+
     fonte()
 
-      .filter(v => v.toLowerCase().includes(valor))
+      .filter(v =>
+        v.toString()
+         .toLowerCase()
+         .includes(valor)
+      )
 
       .slice(0, 3)
 
@@ -229,19 +290,27 @@ function ativarAutocomplete(input, box, fonte) {
   });
 
 }
- 
-/* ATIVAR AUTOCOMPLETE */
+
+
+/* =========================
+   ATIVAR AUTOCOMPLETE ITEM
+========================= */
 
 ativarAutocomplete(
 
-  document.getElementById("itens"),
+  document.getElementById("item"),
 
   document.getElementById("sugestoesItem"),
 
   () => itens
 
 );
- 
+
+
+/* =========================
+   ATIVAR AUTOCOMPLETE NOME
+========================= */
+
 ativarAutocomplete(
 
   document.getElementById("nome"),
@@ -251,69 +320,163 @@ ativarAutocomplete(
   () => nomes
 
 );
- 
-/* SUBMIT */
 
-document.getElementById("form").addEventListener("submit", async e => {
+
+/* =========================
+   ENVIO DO FORMULÁRIO
+========================= */
+
+document
+.getElementById("form")
+.addEventListener("submit", async e => {
 
   e.preventDefault();
- 
+
+
   const form = e.target;
 
-  const dados = Object.fromEntries(new FormData(form));
- 
-  const itemDigitado = dados.setor.trim().toLowerCase();
+  const botao =
+    document.getElementById("btnEnviar");
 
-  const nomeDigitado = dados.nome.trim().toLowerCase();
- 
+
+  /* PEGAR DADOS */
+
+  const dados =
+    Object.fromEntries(
+      new FormData(form)
+    );
+
+
+  /* NORMALIZAR ITEM */
+
+  const itemDigitado =
+    dados.setor
+      .trim()
+      .toLowerCase();
+
+
+  /* NORMALIZAR NOME */
+
+  const nomeDigitado =
+    dados.nome
+      .trim()
+      .toLowerCase();
+
+
+  /* =========================
+     VALIDAR ITEM
+  ========================= */
+
   const itemValido = itens
 
-    .map(i => i.trim().toLowerCase())
+    .map(i =>
+      i.toString()
+       .trim()
+       .toLowerCase()
+    )
 
     .includes(itemDigitado);
- 
-  const nomeValido = nomes
 
-    .map(n => n.trim().toLowerCase())
 
-    .includes(nomeDigitado);
- 
   if (!itemValido) {
 
-    alert("❌ Item não encontrado na base.");
+    alert(
+      "❌ Item não encontrado na base."
+    );
 
-    document.getElementById("item").focus();
+    document
+      .getElementById("item")
+      .focus();
 
     return;
 
   }
- 
+
+
+  /* =========================
+     VALIDAR NOME
+  ========================= */
+
+  const nomeValido = nomes
+
+    .map(n =>
+      n.toString()
+       .trim()
+       .toLowerCase()
+    )
+
+    .includes(nomeDigitado);
+
+
   if (!nomeValido) {
 
-    alert("❌ Nome não encontrado na base.");
+    alert(
+      "❌ Nome não encontrado na base."
+    );
 
-    document.getElementById("nome").focus();
+    document
+      .getElementById("nome")
+      .focus();
 
     return;
 
   }
- 
-  await fetch(API_URL, {
 
-    method: "POST",
 
-    body: JSON.stringify(dados)
+  /* =========================
+     ENVIAR
+  ========================= */
 
-  });
- 
-  alert("✅ Registro enviado com sucesso!");
+  try {
 
-  form.reset();
+    botao.disabled = true;
+
+    botao.textContent =
+      "ENVIANDO...";
+
+
+    await fetch(API_URL, {
+
+      method: "POST",
+
+      body: JSON.stringify(dados)
+
+    });
+
+
+    alert(
+      "✅ Registro enviado com sucesso!"
+    );
+
+
+    /* LIMPAR FORMULÁRIO */
+
+    form.reset();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "❌ Erro ao enviar o registro."
+    );
+
+
+  } finally {
+
+    botao.disabled = false;
+
+    botao.textContent =
+      "ENVIAR";
+
+  }
 
 });
+
 </script>
- 
+
 </body>
+
 </html>
- 
 
